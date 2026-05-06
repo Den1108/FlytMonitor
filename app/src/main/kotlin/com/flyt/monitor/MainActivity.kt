@@ -28,15 +28,15 @@ class MainActivity : AppCompatActivity() {
         
         CoroutineScope(Dispatchers.Main).launch {
             // Проверка сайта Flyt RP
-            val siteStatus = withContext(Dispatchers.IO) { checkPing("https://google.com") } // Замени на свой домен
+            val siteStatus = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") } // Замени на свой домен
             logStatus("Сайт Flyt RP", siteStatus)
 
             // Проверка SAMP сервера
-            val sampStatus = withContext(Dispatchers.IO) { checkSamp("127.0.0.1", 7777) }
+            val sampStatus = withContext(Dispatchers.IO) { checkSamp("188.127.241.8", 1389) }
             logStatus("SAMP Сервер", sampStatus)
 
             // Проверка Minecraft
-            val mcStatus = withContext(Dispatchers.IO) { checkTcp( "127.0.0.1", 25565) }
+            val mcStatus = withContext(Dispatchers.IO) { checkTcp( "Den16459-TGYN.aternos.me", 14882) }
             logStatus("Minecraft Сервер", mcStatus)
         }
     }
