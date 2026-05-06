@@ -1,6 +1,9 @@
 package com.flyt.monitor
 
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -9,56 +12,91 @@ import java.net.*
 
 class MainActivity : AppCompatActivity() {
 
-    // 1. Объявляем переменную ЗДЕСЬ. 
-    // Это делает её доступной для всех функций внутри этого класса.
-    private lateinit var statusLogs: TextView
+    // Объявляем элементы интерфейса
+    private lateinit var statusSite: TextView
+    private lateinit var indicatorSite: View
+    
+    private lateinit var statusSamp: TextView
+    private lateinit var indicatorSamp: View
+    
+    private lateinit var statusDiscord: TextView
+    private lateinit var indicatorDiscord: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 2. Инициализируем её. ID "statusLogs" должен быть в твоем activity_main.xml
-        statusLogs = findViewById(R.id.statusLogs)
+        // Инициализация элементов по их ID из твоего XML
+        statusSite = findViewById(R.id.statusSite)
+        indicatorSite = findViewById(R.id.indicatorSite)
+        
+        statusSamp = findViewById(R.id.statusSamp)
+        indicatorSamp = findViewById(R.id.indicatorSamp)
+        
+        statusDiscord = findViewById(R.id.statusDiscord)
+        indicatorDiscord = findViewById(R.id.indicatorDiscord)
+
         val refreshButton = findViewById<Button>(R.id.refreshButton)
 
         refreshButton.setOnClickListener {
             checkAllServers()
         }
 
-        // Запускаем первую проверку автоматически при старте приложения
+        // Запуск проверки при старте
         checkAllServers()
     }
 
     private fun checkAllServers() {
-        // Теперь эта функция видит statusLogs, потому что она объявлена в начале класса
-        statusLogs.text = "🔄 Синхронизация данных...\n"
-        
+        // Устанавливаем статус "Проверка" для всех
+        resetStatuses()
+
         CoroutineScope(Dispatchers.Main).launch {
-            // Проверка Сайта Flyt RP
-            val siteStatus = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") }
-            logStatus("Сайт Flyt RP", siteStatus)
+            // 1. Сайт Flyt RP
+            val isSiteOnline = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") }
+            updateUI(statusSite, indicatorSite, isSiteOnline)
 
-            // Проверка SAMP Сервера
-            val sampStatus = withContext(Dispatchers.IO) { checkSamp("188.127.241.8", 1389) }
-            logStatus("SAMP Сервер", sampStatus)
+            // 2. SAMP Сервер
+            val isSampOnline = withContext(Dispatchers.IO) { checkSamp("188.127.241.8", 1389) }
+            updateUI(statusSamp, indicatorSamp, isSampOnline)
 
-            // Проверка твоего Discord Бота (Node.js на порту 12719)
-            val dcStatus = withContext(Dispatchers.IO) { checkPing("http://217.154.161.167:12719/") }
-            logStatus("Discord Бот", dcStatus)
-
-            // Проверка Minecraft (Aternos через API)
-            val mcStatus = withContext(Dispatchers.IO) { checkMinecraftViaApi("Den16459-TGYN.aternos.me", 14882) }
-            logStatus("Minecraft Сервер", mcStatus)
+            // 3. Discord Бот
+            val isDiscordOnline = withContext(Dispatchers.IO) { checkPing("http://217.154.161.167:12719/") }
+            updateUI(statusDiscord, indicatorDiscord, isDiscordOnline)
         }
     }
 
-    private fun logStatus(name: String, isOnline: Boolean) {
-        val icon = if (isOnline) "🟢" else "🔴"
-        val text = if (isOnline) "ONLINE" else "OFFLINE"
-        statusLogs.append("\n$icon $name: $text")
+    // Функция для обновления визуального состояния карточки
+    private fun updateUI(statusText: TextView, indicator: View, isOnline: Boolean) {
+        if (isOnline) {
+            statusText.text = "ONLINE"
+            statusText.setTextColor(Color.parseColor("#4CAF50")) // Зеленый
+            setIndicatorColor(indicator, "#4CAF50")
+        } else {
+            statusText.text = "OFFLINE"
+            statusText.setTextColor(Color.parseColor("#F44336")) // Красный
+            setIndicatorColor(indicator, "#F44336")
+        }
     }
 
-    // --- Функции технических проверок ---
+    // Красивая отрисовка кружка-индикатора
+    private fun setIndicatorColor(view: View, colorHex: String) {
+        val shape = GradientDrawable()
+        shape.shape = GradientDrawable.OVAL
+        shape.setColor(Color.parseColor(colorHex))
+        view.background = shape
+    }
+
+    private fun resetStatuses() {
+        val grey = "#9E9E9E"
+        statusSite.text = "..."
+        statusSamp.text = "..."
+        statusDiscord.text = "..."
+        setIndicatorColor(indicatorSite, grey)
+        setIndicatorColor(indicatorSamp, grey)
+        setIndicatorColor(indicatorDiscord, grey)
+    }
+
+    // --- ТЕХНИЧЕСКИЕ ПРОВЕРКИ ---
 
     private fun checkPing(urlStr: String): Boolean {
         return try {
@@ -66,16 +104,6 @@ class MainActivity : AppCompatActivity() {
             connection.connectTimeout = 4000
             connection.readTimeout = 4000
             connection.responseCode == 200
-        } catch (e: Exception) { false }
-    }
-
-    private fun checkMinecraftViaApi(host: String, port: Int): Boolean {
-        return try {
-            val url = URL("https://api.mcsrvstat.us/2/$host:$port")
-            val connection = url.openConnection() as HttpURLConnection
-            connection.connectTimeout = 5000
-            val response = connection.inputStream.bufferedReader().readText()
-            response.contains("\"online\":true")
         } catch (e: Exception) { false }
     }
 
