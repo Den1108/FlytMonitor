@@ -9,14 +9,15 @@ import java.net.*
 
 class MainActivity : AppCompatActivity() {
 
-    // Это объявление ДОЛЖНО быть здесь, чтобы переменная была видна во всех функциях класса
+    // 1. Объявляем переменную ЗДЕСЬ. 
+    // Это делает её доступной для всех функций внутри этого класса.
     private lateinit var statusLogs: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Инициализация текстового поля
+        // 2. Инициализируем её. ID "statusLogs" должен быть в твоем activity_main.xml
         statusLogs = findViewById(R.id.statusLogs)
         val refreshButton = findViewById<Button>(R.id.refreshButton)
 
@@ -24,27 +25,28 @@ class MainActivity : AppCompatActivity() {
             checkAllServers()
         }
 
-        // Автоматическая проверка при запуске приложения
+        // Запускаем первую проверку автоматически при старте приложения
         checkAllServers()
     }
 
     private fun checkAllServers() {
+        // Теперь эта функция видит statusLogs, потому что она объявлена в начале класса
         statusLogs.text = "🔄 Синхронизация данных...\n"
         
         CoroutineScope(Dispatchers.Main).launch {
-            // 1. Сайт Flyt RP
+            // Проверка Сайта Flyt RP
             val siteStatus = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") }
             logStatus("Сайт Flyt RP", siteStatus)
 
-            // 2. SAMP Сервер (Flyt RP)
+            // Проверка SAMP Сервера
             val sampStatus = withContext(Dispatchers.IO) { checkSamp("188.127.241.8", 1389) }
             logStatus("SAMP Сервер", sampStatus)
 
-            // 3. Твой Discord Бот (Node.js)
+            // Проверка твоего Discord Бота (Node.js на порту 12719)
             val dcStatus = withContext(Dispatchers.IO) { checkPing("http://217.154.161.167:12719/") }
             logStatus("Discord Бот", dcStatus)
 
-            // 4. Minecraft (Aternos через API)
+            // Проверка Minecraft (Aternos через API)
             val mcStatus = withContext(Dispatchers.IO) { checkMinecraftViaApi("Den16459-TGYN.aternos.me", 14882) }
             logStatus("Minecraft Сервер", mcStatus)
         }
@@ -56,12 +58,12 @@ class MainActivity : AppCompatActivity() {
         statusLogs.append("\n$icon $name: $text")
     }
 
-    // --- Методы проверки ---
+    // --- Функции технических проверок ---
 
     private fun checkPing(urlStr: String): Boolean {
         return try {
             val connection = URL(urlStr).openConnection() as HttpURLConnection
-            connection.connectTimeout = 4000 
+            connection.connectTimeout = 4000
             connection.readTimeout = 4000
             connection.responseCode == 200
         } catch (e: Exception) { false }
