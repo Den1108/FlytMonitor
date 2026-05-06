@@ -22,6 +22,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var statusDiscord: TextView
     private lateinit var indicatorDiscord: View
 
+    // Добавляем второго бота
+    private lateinit var statusDiscordTwo: TextView
+    private lateinit var indicatorDiscordTwo: View
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         statusDiscord = findViewById(R.id.statusDiscord)
         indicatorDiscord = findViewById(R.id.indicatorDiscord)
 
+        statusDiscordTwo = findViewById(R.id.statusDiscordTwo)
+        indicatorDiscordTwo = findViewById(R.id.indicatorDiscordTwo)
+
         val refreshButton = findViewById<Button>(R.id.refreshButton)
         refreshButton.setOnClickListener { checkAllServers() }
 
@@ -45,19 +52,25 @@ class MainActivity : AppCompatActivity() {
         resetStatuses()
 
         CoroutineScope(Dispatchers.Main).launch {
-            // Сайт
+            // Сайт проекта
             val isSiteOnline = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") }
             updateUI(statusSite, indicatorSite, isSiteOnline)
 
-            // SAMP
+            // SAMP Сервер
             val isSampOnline = withContext(Dispatchers.IO) { checkSamp("188.127.241.8", 1389) }
             updateUI(statusSamp, indicatorSamp, isSampOnline)
 
-            // Discord Бот (Увеличили таймаут для надежности)
+            // Discord Бот 1 (Main)
             val isDiscordOnline = withContext(Dispatchers.IO) { 
                 checkPing("http://217.154.161.167:12719/") 
             }
             updateUI(statusDiscord, indicatorDiscord, isDiscordOnline)
+
+            // Discord Бот 2 (Если адрес другой — замени тут)
+            val isDiscordTwoOnline = withContext(Dispatchers.IO) {
+                checkPing("http://217.154.161.167:12720/") 
+            }
+            updateUI(statusDiscordTwo, indicatorDiscordTwo, isDiscordTwoOnline)
         }
     }
 
@@ -82,12 +95,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun resetStatuses() {
         val grey = "#9E9E9E"
-        statusSite.text = "..."
-        statusSamp.text = "..."
-        statusDiscord.text = "..."
-        setIndicatorColor(indicatorSite, grey)
-        setIndicatorColor(indicatorSamp, grey)
-        setIndicatorColor(indicatorDiscord, grey)
+        val loading = "..."
+        
+        val pairs = listOf(
+            statusSite to indicatorSite,
+            statusSamp to indicatorSamp,
+            statusDiscord to indicatorDiscord,
+            statusDiscordTwo to indicatorDiscordTwo
+        )
+
+        pairs.forEach { (text, indicator) ->
+            text.text = loading
+            text.setTextColor(Color.parseColor(grey))
+            setIndicatorColor(indicator, grey)
+        }
     }
 
     private fun checkPing(urlStr: String): Boolean {
@@ -95,14 +116,11 @@ class MainActivity : AppCompatActivity() {
             val url = URL(urlStr)
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
-            connection.connectTimeout = 7000 // Увеличили до 7 секунд
+            connection.connectTimeout = 7000
             connection.readTimeout = 7000
-            // Принимаем любой код от 200 до 399
             val responseCode = connection.responseCode
-            Log.d("MonitorCheck", "Checking $urlStr - Code: $responseCode")
             responseCode in 200..399
         } catch (e: Exception) {
-            Log.e("MonitorCheck", "Error checking $urlStr: ${e.message}")
             false
         }
     }

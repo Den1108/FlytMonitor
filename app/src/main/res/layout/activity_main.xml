@@ -1,93 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F0F2F5">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/refreshButton"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Flyt Project"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="#333333" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Мониторинг систем"
-            android:textSize="14sp"
-            android:textColor="#777777"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Карточка Сайта -->
-        <androidx.cardview.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Flyt Project"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A1A" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Статус систем в реальном времени"
+                android:textSize="14sp"
+                android:textColor="#606770"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Карточка: Сайт -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-                <View android:id="@+id/indicatorSite" android:layout_width="12dp" android:layout_height="12dp" android:background="@android:color/darker_gray" />
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="Сайт проекта" android:textSize="18sp" />
-                <TextView android:id="@+id/statusSite" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
+                    <View android:id="@+id/indicatorSite" android:layout_width="14dp" android:layout_height="14dp" android:background="@android:color/darker_gray" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="Веб-сайт" android:textSize="18sp" android:textColor="#1C1E21" android:textStyle="medium" />
+                    <TextView android:id="@+id/statusSite" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <!-- Карточка SAMP -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
+            <!-- Карточка: SAMP -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-                <View android:id="@+id/indicatorSamp" android:layout_width="12dp" android:layout_height="12dp" android:background="@android:color/darker_gray" />
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="SAMP: Flyt RP" android:textSize="18sp" />
-                <TextView android:id="@+id/statusSamp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
+                    <View android:id="@+id/indicatorSamp" android:layout_width="14dp" android:layout_height="14dp" android:background="@android:color/darker_gray" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="Flyt RP (SAMP)" android:textSize="18sp" android:textColor="#1C1E21" />
+                    <TextView android:id="@+id/statusSamp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <!-- Карточка Discord -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
+            <!-- Карточка: Discord Бот 1 -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-                <View android:id="@+id/indicatorDiscord" android:layout_width="12dp" android:layout_height="12dp" android:background="@android:color/darker_gray" />
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="Discord Бот" android:textSize="18sp" />
-                <TextView android:id="@+id/statusDiscord" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
+                    <View android:id="@+id/indicatorDiscord" android:layout_width="14dp" android:layout_height="14dp" android:background="@android:color/darker_gray" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="Main Discord Bot" android:textSize="18sp" android:textColor="#1C1E21" />
+                    <TextView android:id="@+id/statusDiscord" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <Button
-            android:id="@+id/refreshButton"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Обновить данные"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF" />
+            <!-- Карточка: Discord Бот 2 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
+                    <View android:id="@+id/indicatorDiscordTwo" android:layout_width="14dp" android:layout_height="14dp" android:background="@android:color/darker_gray" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="(Staff) Discord Bot" android:textSize="18sp" android:textColor="#1C1E21" />
+                    <TextView android:id="@+id/statusDiscordTwo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
-</ScrollView>
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/refreshButton"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_margin="16dp"
+        android:text="ОБНОВИТЬ ДАННЫЕ"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:backgroundTint="#1877F2"
+        android:textColor="#FFFFFF"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
