@@ -27,16 +27,16 @@ class MainActivity : AppCompatActivity() {
         statusLogs.text = "Проверка...\n"
         
         CoroutineScope(Dispatchers.Main).launch {
-            // 1. Сайт (Flyt RP)
+            // 1. Сайт
             val siteStatus = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") }
             logStatus("Сайт Flyt RP", siteStatus)
 
-            // 2. SAMP (Исправленный пакет)
+            // 2. SAMP
             val sampStatus = withContext(Dispatchers.IO) { checkSamp("188.127.241.8", 1389) }
             logStatus("SAMP Сервер", sampStatus)
 
-            // 3. Minecraft (Aternos требует более глубокой проверки)
-            val mcStatus = withContext(Dispatchers.IO) { checkMinecraftStatus("Den16459-TGYN.aternos.me", 14882) }
+            // 3. Minecraft (Через API для стабильности с Aternos)
+            val mcStatus = withContext(Dispatchers.IO) { checkMinecraftViaApi("Den16459-TGYN.aternos.me", 14882) }
             logStatus("Minecraft Сервер", mcStatus)
         }
     }
@@ -47,21 +47,17 @@ class MainActivity : AppCompatActivity() {
         statusLogs.append("\n$icon $name: $text")
     }
 
-    // Улучшенная проверка для Minecraft (пытаемся прочитать данные сервера)
-    private fun checkMinecraftStatus(host: String, port: Int): Boolean {
+    private fun checkMinecraftViaApi(host: String, port: Int): Boolean {
         return try {
-            Socket().use { socket ->
-                socket.connect(InetSocketAddress(host, port), 3000)
-                val out = socket.getOutputStream()
-                val input = socket.getInputStream()
-
-                // Отправляем базовый пакет Handshake
-                out.write(byteArrayOf(0xFE.toByte(), 0x01.toByte()))
-                
-                // Если сервер ответил хоть чем-то, значит он запущен и готов принимать игроков
-                val response = input.read()
-                response != -1
-            }
+            // Используем официальное API для получения статуса
+            val url = URL("https://api.mcsrvstat.us/2/$host:$port")
+            val connection = url.openConnection() as HttpURLConnection
+            connection.connectTimeout = 5000 // Даем 5 секунд, так как Aternos может "думать"
+            connection.readTimeout = 5000
+            
+            val response = connection.inputStream.bufferedReader().readText()
+            // Если в ответе JSON поле "online" равно true
+            response.contains("\"online\":true")
         } catch (e: Exception) {
             false
         }
