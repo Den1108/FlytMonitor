@@ -27,16 +27,16 @@ class MainActivity : AppCompatActivity() {
         statusLogs.text = "Проверка...\n"
         
         CoroutineScope(Dispatchers.Main).launch {
-            // Проверка сайта Flyt RP
-            val siteStatus = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") } // Замени на свой домен
+            // 1. Сайт (Flyt RP)
+            val siteStatus = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") }
             logStatus("Сайт Flyt RP", siteStatus)
 
-            // Проверка SAMP сервера
+            // 2. SAMP (Исправленный пакет)
             val sampStatus = withContext(Dispatchers.IO) { checkSamp("188.127.241.8", 1389) }
             logStatus("SAMP Сервер", sampStatus)
 
-            // Проверка Minecraft
-            val mcStatus = withContext(Dispatchers.IO) { checkTcp( "Den16459-TGYN.aternos.me", 14882) }
+            // 3. Minecraft (Aternos требует более глубокой проверки)
+            val mcStatus = withContext(Dispatchers.IO) { checkMinecraftStatus("Den16459-TGYN.aternos.me", 14882) }
             logStatus("Minecraft Сервер", mcStatus)
         }
     }
@@ -47,32 +47,68 @@ class MainActivity : AppCompatActivity() {
         statusLogs.append("\n$icon $name: $text")
     }
 
-    // Универсальный TCP пинг (для Minecraft/Сайтов)
-    private fun checkTcp(host: String, port: Int): Boolean {
+    // Улучшенная проверка для Minecraft (пытаемся прочитать данные сервера)
+    private fun checkMinecraftStatus(host: String, port: Int): Boolean {
         return try {
-            Socket().use { it.connect(InetSocketAddress(host, port), 2000) }
-            true
-        } catch (e: Exception) { false }
+            Socket().use { socket ->
+                socket.connect(InetSocketAddress(host, port), 3000)
+                val out = socket.getOutputStream()
+                val input = socket.getInputStream()
+
+                // Отправляем базовый пакет Handshake
+                out.write(byteArrayOf(0xFE.toByte(), 0x01.toByte()))
+                
+                // Если сервер ответил хоть чем-то, значит он запущен и готов принимать игроков
+                val response = input.read()
+                response != -1
+            }
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun checkPing(urlStr: String): Boolean {
         return try {
             val connection = URL(urlStr).openConnection() as HttpURLConnection
-            connection.connectTimeout = 2000
+            connection.connectTimeout = 3000
             connection.responseCode == 200
         } catch (e: Exception) { false }
     }
 
-    // Специальный UDP пинг для SAMP
+    // Исправленный UDP пинг для SAMP (Протокол Query)
     private fun checkSamp(ip: String, port: Int): Boolean {
+        var socket: DatagramSocket? = null
         return try {
-            val socket = DatagramSocket()
-            socket.soTimeout = 2000
+            socket = DatagramSocket()
+            socket.soTimeout = 3000
             val address = InetAddress.getByName(ip)
-            val packetData = "SAMP".toByteArray() + byteArrayOf((port and 0xFF).toByte(), (port shr 8 and 0xFF).toByte(), 'i'.toByte())
-            socket.send(DatagramPacket(packetData, packetData.size, address, port))
-            socket.receive(DatagramPacket(ByteArray(1024), 1024))
-            true
-        } catch (e: Exception) { false }
+            
+            val parts = ip.split(".")
+            if (parts.size != 4) return false
+
+            // Формируем пакет запроса информации (SAMP Query)
+            val buffer = java.nio.ByteBuffer.allocate(11)
+            buffer.put("SAMP".toByteArray())
+            buffer.put(parts[0].toInt().toByte())
+            buffer.put(parts[1].toInt().toByte())
+            buffer.put(parts[2].toInt().toByte())
+            buffer.put(parts[3].toInt().toByte())
+            buffer.put((port and 0xFF).toByte())
+            buffer.put((port shr 8 and 0xFF).toByte())
+            buffer.put('i'.toByte()) // 'i' - запрос информации
+
+            val packet = DatagramPacket(buffer.array(), buffer.capacity(), address, port)
+            socket.send(packet)
+
+            val receivePacket = DatagramPacket(ByteArray(1024), 1024)
+            socket.receive(receivePacket)
+            
+            // Если получили ответ, сервер онлайн
+            receivePacket.length > 0
+        } catch (e: Exception) {
+            false
+        } finally {
+            socket?.close()
+        }
     }
 }
