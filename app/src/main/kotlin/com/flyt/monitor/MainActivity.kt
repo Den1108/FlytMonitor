@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
             // Discord Бот 2 (Если адрес другой — замени тут)
             val isDiscordTwoOnline = withContext(Dispatchers.IO) {
-                checkPing("http://217.154.161.167:12720/") 
+                checkPing("http://212.132.120.102:10237/") 
             }
             updateUI(statusDiscordTwo, indicatorDiscordTwo, isDiscordTwoOnline)
         }
