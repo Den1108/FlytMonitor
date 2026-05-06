@@ -1,8 +1,6 @@
 package com.flyt.monitor
 
-import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -11,21 +9,22 @@ import java.net.*
 
 class MainActivity : AppCompatActivity() {
 
-    // Если ты оставил старый дизайн с одним TextView (statusLogs)
+    // Это объявление ДОЛЖНО быть здесь, чтобы переменная была видна во всех функциях класса
     private lateinit var statusLogs: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Инициализация текстового поля
         statusLogs = findViewById(R.id.statusLogs)
         val refreshButton = findViewById<Button>(R.id.refreshButton)
 
         refreshButton.setOnClickListener {
             checkAllServers()
         }
-        
-        // Запускаем проверку сразу при входе
+
+        // Автоматическая проверка при запуске приложения
         checkAllServers()
     }
 
@@ -33,20 +32,19 @@ class MainActivity : AppCompatActivity() {
         statusLogs.text = "🔄 Синхронизация данных...\n"
         
         CoroutineScope(Dispatchers.Main).launch {
-            // 1. Сайт
+            // 1. Сайт Flyt RP
             val siteStatus = withContext(Dispatchers.IO) { checkPing("https://flytrp.hopto.org/") }
             logStatus("Сайт Flyt RP", siteStatus)
 
-            // 2. SAMP Сервер
+            // 2. SAMP Сервер (Flyt RP)
             val sampStatus = withContext(Dispatchers.IO) { checkSamp("188.127.241.8", 1389) }
             logStatus("SAMP Сервер", sampStatus)
 
-            // 3. Твой Discord бот (Node.js)
-            // Добавляем проверку твоего бота по порту 12719
+            // 3. Твой Discord Бот (Node.js)
             val dcStatus = withContext(Dispatchers.IO) { checkPing("http://217.154.161.167:12719/") }
             logStatus("Discord Бот", dcStatus)
 
-            // 4. Minecraft (Aternos)
+            // 4. Minecraft (Aternos через API)
             val mcStatus = withContext(Dispatchers.IO) { checkMinecraftViaApi("Den16459-TGYN.aternos.me", 14882) }
             logStatus("Minecraft Сервер", mcStatus)
         }
@@ -58,17 +56,15 @@ class MainActivity : AppCompatActivity() {
         statusLogs.append("\n$icon $name: $text")
     }
 
-    // --- ФУНКЦИИ ПРОВЕРКИ ---
+    // --- Методы проверки ---
 
     private fun checkPing(urlStr: String): Boolean {
         return try {
             val connection = URL(urlStr).openConnection() as HttpURLConnection
-            connection.connectTimeout = 4000 // Немного увеличим время для слабого хостинга
+            connection.connectTimeout = 4000 
             connection.readTimeout = 4000
             connection.responseCode == 200
-        } catch (e: Exception) { 
-            false 
-        }
+        } catch (e: Exception) { false }
     }
 
     private fun checkMinecraftViaApi(host: String, port: Int): Boolean {
