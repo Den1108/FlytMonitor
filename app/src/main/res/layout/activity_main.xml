@@ -1,106 +1,494 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F2F5">
+    android:background="#0A0E1A">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/refreshButton"
-        app:layout_constraintTop_toTopOf="parent">
+        android:scrollbars="none"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="48dp"
+            android:paddingBottom="16dp">
+
+            <!-- Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="FLYT"
+                    android:textSize="42sp"
+                    android:letterSpacing="0.15"
+                    android:fontFamily="sans-serif-black"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/autoRefreshBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="● LIVE"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.1"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#00E5A0"
+                    android:background="@drawable/badge_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Flyt Project"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:textColor="#1A1A1A" />
+                android:text="MONITOR · СИСТЕМА МОНИТОРИНГА"
+                android:textSize="11sp"
+                android:letterSpacing="0.12"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#4A5578"
+                android:layout_marginBottom="8dp" />
 
+            <!-- Last update -->
             <TextView
+                android:id="@+id/lastUpdateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Статус систем в реальном времени"
-                android:textSize="14sp"
-                android:textColor="#606770"
+                android:text="Ожидание первой проверки..."
+                android:textSize="12sp"
+                android:textColor="#2E3A5C"
+                android:fontFamily="monospace"
+                android:layout_marginBottom="32dp" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#111827"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Карточка: Сайт -->
+            <!-- Card: Сайт -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardSite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#0F1628">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:gravity="center_vertical">
-                    <View android:id="@+id/indicatorSite" android:layout_width="14dp" android:layout_height="14dp" android:background="@android:color/darker_gray" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="Веб-сайт" android:textSize="18sp" android:textColor="#1C1E21" />
-                    <TextView android:id="@+id/statusSite" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="14dp">
+
+                        <!-- Icon circle -->
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp">
+                            <View
+                                android:id="@+id/iconBgSite"
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/icon_bg" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="🌐"
+                                android:textSize="18sp" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="14dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Веб-сайт"
+                                android:textSize="17sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textColor="#FFFFFF" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="flytrp.hopto.org"
+                                android:textSize="11sp"
+                                android:textColor="#2E3A5C"
+                                android:fontFamily="monospace" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="end">
+                            <TextView
+                                android:id="@+id/statusSite"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="---"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:letterSpacing="0.08"
+                                android:textColor="#4A5578" />
+                            <View
+                                android:id="@+id/indicatorSite"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:layout_gravity="end"
+                                android:layout_marginTop="4dp"
+                                android:background="@drawable/indicator_dot" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Ping bar -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LATENCY"
+                            android:textSize="9sp"
+                            android:letterSpacing="0.15"
+                            android:textColor="#2E3A5C"
+                            android:fontFamily="sans-serif-medium" />
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="#111827"
+                            android:layout_marginHorizontal="10dp" />
+                        <TextView
+                            android:id="@+id/pingSite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="— ms"
+                            android:textSize="12sp"
+                            android:fontFamily="monospace"
+                            android:textColor="#2E3A5C" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Карточка: Discord Бот 1 -->
+            <!-- Card: Discord Бот 1 -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardDiscord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#0F1628">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:gravity="center_vertical">
-                    <View android:id="@+id/indicatorDiscord" android:layout_width="14dp" android:layout_height="14dp" android:background="@android:color/darker_gray" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="Main (Discord Bot)" android:textSize="18sp" android:textColor="#1C1E21" />
-                    <TextView android:id="@+id/statusDiscord" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="14dp">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp">
+                            <View
+                                android:id="@+id/iconBgDiscord"
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/icon_bg" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="🤖"
+                                android:textSize="18sp" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="14dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Main Bot"
+                                android:textSize="17sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textColor="#FFFFFF" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="217.154.161.167:12719"
+                                android:textSize="11sp"
+                                android:textColor="#2E3A5C"
+                                android:fontFamily="monospace" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="end">
+                            <TextView
+                                android:id="@+id/statusDiscord"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="---"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:letterSpacing="0.08"
+                                android:textColor="#4A5578" />
+                            <View
+                                android:id="@+id/indicatorDiscord"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:layout_gravity="end"
+                                android:layout_marginTop="4dp"
+                                android:background="@drawable/indicator_dot" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LATENCY"
+                            android:textSize="9sp"
+                            android:letterSpacing="0.15"
+                            android:textColor="#2E3A5C"
+                            android:fontFamily="sans-serif-medium" />
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="#111827"
+                            android:layout_marginHorizontal="10dp" />
+                        <TextView
+                            android:id="@+id/pingDiscord"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="— ms"
+                            android:textSize="12sp"
+                            android:fontFamily="monospace"
+                            android:textColor="#2E3A5C" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Карточка: Discord Бот 2 -->
+            <!-- Card: Discord Бот 2 -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardDiscordTwo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#0F1628">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:gravity="center_vertical">
-                    <View android:id="@+id/indicatorDiscordTwo" android:layout_width="14dp" android:layout_height="14dp" android:background="@android:color/darker_gray" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="Moderation (Discord Bot)" android:textSize="18sp" android:textColor="#1C1E21" />
-                    <TextView android:id="@+id/statusDiscordTwo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="---" android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="14dp">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp">
+                            <View
+                                android:id="@+id/iconBgDiscordTwo"
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/icon_bg" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="🛡️"
+                                android:textSize="18sp" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="14dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Moderation Bot"
+                                android:textSize="17sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textColor="#FFFFFF" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="212.132.120.102:10237"
+                                android:textSize="11sp"
+                                android:textColor="#2E3A5C"
+                                android:fontFamily="monospace" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="end">
+                            <TextView
+                                android:id="@+id/statusDiscordTwo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="---"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:letterSpacing="0.08"
+                                android:textColor="#4A5578" />
+                            <View
+                                android:id="@+id/indicatorDiscordTwo"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:layout_gravity="end"
+                                android:layout_marginTop="4dp"
+                                android:background="@drawable/indicator_dot" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LATENCY"
+                            android:textSize="9sp"
+                            android:letterSpacing="0.15"
+                            android:textColor="#2E3A5C"
+                            android:fontFamily="sans-serif-medium" />
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="#111827"
+                            android:layout_marginHorizontal="10dp" />
+                        <TextView
+                            android:id="@+id/pingDiscordTwo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="— ms"
+                            android:textSize="12sp"
+                            android:fontFamily="monospace"
+                            android:textColor="#2E3A5C" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <!-- Auto-refresh info -->
+            <TextView
+                android:id="@+id/nextRefreshText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Следующее обновление через 60с"
+                android:textSize="11sp"
+                android:textColor="#2E3A5C"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
 
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/refreshButton"
+    <!-- Bottom Bar -->
+    <LinearLayout
+        android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_margin="16dp"
-        android:text="ОБНОВИТЬ ДАННЫЕ"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:backgroundTint="#1877F2"
-        android:textColor="#FFFFFF"
-        app:cornerRadius="12dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp"
+        android:paddingBottom="28dp"
+        android:background="#0A0E1A"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/refreshButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="↻  ОБНОВИТЬ"
+            android:textSize="13sp"
+            android:letterSpacing="0.1"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#0F1628"
+            app:cornerRadius="14dp"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/notifButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:text="🔔"
+            android:textSize="20sp"
+            android:backgroundTint="#0F1628"
+            app:cornerRadius="14dp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
