@@ -29,9 +29,17 @@ class MonitorService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createChannels()
-        startForeground(1, buildForegroundNotification())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                1,
+                buildForegroundNotification(),
+                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            startForeground(1, buildForegroundNotification())
+        }
         startMonitoring()
-        return START_STICKY // Перезапускается автоматически если система убила сервис
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

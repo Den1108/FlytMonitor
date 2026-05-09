@@ -28,6 +28,7 @@
         <!-- Фоновый сервис мониторинга -->
         <service
             android:name=".MonitorService"
+            android:foregroundServiceType="dataSync"
             android:exported="false" />
 
         <!-- Автозапуск после перезагрузки -->
