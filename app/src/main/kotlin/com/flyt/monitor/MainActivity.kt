@@ -15,6 +15,8 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import android.widget.TextView
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -141,6 +143,13 @@ class MainActivity : AppCompatActivity() {
     // ── Check all servers ─────────────────────────────────────────────────────
     private fun checkAllServers() {
         resetStatuses()
+        if (!hasInternetConnection()) {
+            statusSite.text = "NO INTERNET"
+            statusDiscord.text = "NO INTERNET"
+            statusDiscordTwo.text = "NO INTERNET"
+
+            return
+        }
         val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
         lastUpdateText.text = "Обновление: ${sdf.format(Date())}"
 
@@ -157,6 +166,17 @@ class MainActivity : AppCompatActivity() {
             val (d2Online, d2Ping) = withContext(Dispatchers.IO) { checkServer("http://212.132.120.102:10237/") }
             updateUI("discordTwo", statusDiscordTwo, indicatorDiscordTwo, pingDiscordTwo, d2Online, d2Ping)
         }
+    }
+
+    private fun hasInternetConnection(): Boolean {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(network) ?: return false
+
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     // ── Server check with latency ─────────────────────────────────────────────
