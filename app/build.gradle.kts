@@ -49,6 +49,7 @@ dependencies {
 
     // Библиотека для фоновых задач (чтобы приложение не зависало при проверке серверов)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.cardview:cardview:1.0.0")
 
     // Тестирование
     testImplementation("org.jetbrains.kotlin:kotlin-test")

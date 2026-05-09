@@ -320,6 +320,8 @@ class MainActivity : AppCompatActivity() {
             notifButton.backgroundTintList = android.content.res.ColorStateList.valueOf(
                 Color.parseColor("#0F1628")
             )
+            // Останавливаем фоновый сервис
+            stopService(Intent(this, MonitorService::class.java))
         }
     }
 
@@ -329,6 +331,9 @@ class MainActivity : AppCompatActivity() {
         notifButton.backgroundTintList = android.content.res.ColorStateList.valueOf(
             Color.parseColor("#1A2A1A")
         )
+        // Запускаем фоновый сервис
+        val intent = Intent(this, MonitorService::class.java)
+        ContextCompat.startForegroundService(this, intent)
     }
 
     override fun onRequestPermissionsResult(
